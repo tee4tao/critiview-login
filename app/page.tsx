@@ -18,15 +18,15 @@ export default function Home() {
     }
   };
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24 bg-primary">
-      <section className="bg-white min-h-screen container flex flex-col items-center">
+    <main className="flex min-h-screen w-full flex-col items-center justify-between p-6 bg-primary lg:p-0 lg:items-end">
+      <section className="bg-white py-8 container rounded-lg flex flex-col items-center lg:w-1/2 lg:min-h-screen lg:p-8">
       <header className="flex justify-between items-center w-full">
         <div className="logo p-4 font-bold text-xl flex items-center space-x-1"><span className="text-criti-blue"><TbEyeStar /></span> <span>Critiview</span></div>
         <div className="p-4 space-x-1"><span>You do not have an account?</span><Link href={'#'} className="text-criti-blue underline font-semibold">Sign up</Link></div>
       </header>
       <div className="text-center font-semibold my-6 text-2xl">Login</div>
       {/* login option buttons */}
-      <div className="space-x-2 my-2">
+      <div className="space-x-2 my-2 flex">
         <button className="underline underline-offset-8 text-gray-300">Login with socials</button>
         <button className="underline underline-offset-8">Login with email</button>
       </div>
@@ -35,7 +35,7 @@ export default function Home() {
         <button className="bg-black text-white p-2 py-[0.1rem] rounded m-1">Email</button>
         <button className="">Magic Link</button>
       </div>
-      <form action="" className="mt-6 w-[80%]">
+      <form action="" className="mt-6 w-[80%]" onSubmit={(e)=>e.preventDefault()}>
         <div className="flex flex-col">
         <label htmlFor="email">Email address</label>
         <input type="email" name="" id="email" className="border" />
