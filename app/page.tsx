@@ -4,10 +4,23 @@ import Link from "next/link";
 import { TbEyeStar } from "react-icons/tb";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useState } from "react";
+import {useForm, SubmitHandler} from "react-hook-form"
 
 export default function Home() {
   const [icon, setIcon] = useState<boolean>(false);
   const [type, setType] = useState<string>("password");
+  type formField = {
+    email: string,
+    password: string
+  }
+  const {register, handleSubmit, formState:{errors, isSubmitting}} = useForm<formField>()
+  const onSubmit: SubmitHandler<formField> = async(data)=>{
+    await new Promise((resolve) => {
+      setTimeout(resolve, 1000)
+    })
+    console.log(data);
+    
+  }
   const handleToggle = () => {
     if (type === "password") {
       setIcon(true);
@@ -35,19 +48,34 @@ export default function Home() {
         <button className="bg-black text-white p-2 py-[0.1rem] rounded m-1">Email</button>
         <button className="">Magic Link</button>
       </div>
-      <form action="" className="mt-6 w-[80%]" onSubmit={(e)=>e.preventDefault()}>
+      <form action="" className="mt-6 w-[80%]" onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col">
         <label htmlFor="email">Email address</label>
-        <input type="email" name="" id="email" className="border" />
+        <input {...register("email", {
+          required: "email is required",
+          validate: value=>{
+            if (!value.includes('@')) {
+              return "Email must contain @"
+            }
+            return true
+          }
+        })} id="email" className="border" />
+        {errors.email&&(<div className="text-red-500 mt-[5px]">{`${errors.email.message} !`}</div>)}
         </div>
         <div className="mt-4 flex flex-col">
         <label htmlFor="password" className="">Password</label>
         <div className="flex w-full">
-        <input type={type} name="password" id="password" className="border w-full" />
+        <input {...register("password",{
+          required: "Password is required",
+          minLength: {
+            value:8,
+            message: 'Password must have at least 8 characters'
+          },
+        })} type={type} className="border w-full" />
         <span
                 className="flex justify-around items-center"
                 onClick={handleToggle}
-              >
+                >
                 {icon ? (
                   <FaEye className="absolute mr-10" size={25} />
                 ) : (
@@ -55,11 +83,12 @@ export default function Home() {
                 )}
               </span>
               </div>
+                {errors.password&&(<div className="text-red-600 mt-[5px]">{`${errors.password.message} !`}</div>)}
         </div>
         <div className="text-right my-2">
         <Link href={'#'}>Forgot password?</Link>
         </div>
-        <button type="submit" className="border bg-criti-blue w-full text-white p-2 rounded-lg">Login</button>
+        <button type="submit" disabled={isSubmitting} className="border bg-criti-blue w-full text-white p-2 rounded-lg">{isSubmitting?`Loading...`:`Login`}</button>
       </form>
       </section>
     </main>
