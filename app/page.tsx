@@ -5,15 +5,18 @@ import { TbEyeStar } from "react-icons/tb";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useState } from "react";
 import {useForm, SubmitHandler} from "react-hook-form"
+import { z } from "zod";
+import { zodResolver } from '@hookform/resolvers/zod' // it connects our schema to react hook-form; npm install @hookform/resolvers 
 
 export default function Home() {
   const [icon, setIcon] = useState<boolean>(false);
   const [type, setType] = useState<string>("password");
-  type formField = {
-    email: string,
-    password: string
-  }
-  const {register, handleSubmit, formState:{errors, isSubmitting}} = useForm<formField>()
+  const schema = z.object({
+    email: z.string().email(), // all the validations necessary for email has been done here
+    password: z.string().min(8), //// all the validations necessary for password has been done here
+  })
+  type formField = z.infer<typeof schema>
+  const {register, handleSubmit, formState:{errors, isSubmitting}} = useForm<formField>({resolver: zodResolver(schema),})
   const onSubmit: SubmitHandler<formField> = async(data)=>{
     await new Promise((resolve) => {
       setTimeout(resolve, 1000)
@@ -51,27 +54,31 @@ export default function Home() {
       <form action="" className="mt-6 w-[80%]" onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col">
         <label htmlFor="email">Email address</label>
-        <input {...register("email", {
-          required: "email is required",
-          validate: value=>{
-            if (!value.includes('@')) {
-              return "Email must contain @"
-            }
-            return true
-          }
-        })} id="email" className="border" />
+        <input {...register("email"
+        // , {
+        //   required: "email is required",
+        //   validate: value=>{
+        //     if (!value.includes('@')) {
+        //       return "Email must contain @"
+        //     }
+        //     return true
+        //   }
+        // } all custom validation not needed anymore!(it's been taken care of by schema)
+        )} id="email" className="border" />
         {errors.email&&(<div className="text-red-500 mt-[5px]">{`${errors.email.message} !`}</div>)}
         </div>
         <div className="mt-4 flex flex-col">
         <label htmlFor="password" className="">Password</label>
         <div className="flex w-full">
-        <input {...register("password",{
-          required: "Password is required",
-          minLength: {
-            value:8,
-            message: 'Password must have at least 8 characters'
-          },
-        })} type={type} className="border w-full" />
+        <input {...register("password"
+        // ,{
+        //   required: "Password is required",
+        //   minLength: {
+        //     value:8,
+        //     message: 'Password must have at least 8 characters'
+        //   },
+        // } all custom validation not needed anymore!(it's been taken care of by schema)
+        )} type={type} className="border w-full" />
         <span
                 className="flex justify-around items-center"
                 onClick={handleToggle}
